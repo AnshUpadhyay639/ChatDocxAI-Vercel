@@ -1,5 +1,5 @@
 gradio
-pydantic==2.10.6
+pydantic==2.10.6 # Stable version as of now
 google-genai
 langchain
 langchain-community

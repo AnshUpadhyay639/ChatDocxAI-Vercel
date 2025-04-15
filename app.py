@@ -38,8 +38,10 @@ def handle_question(query):
     return f"### My Insights :\n\n{answer.strip()}"
 
 
-with gr.Blocks() as demo:
+with gr.Blocks(theme='NoCrypt/miku') as demo:
     gr.Markdown("## Ask Questions from Your Uploaded Documents")
+    #gr.Image(value="bg.JPG", visible=True)
+
     file_input = gr.File(label="Upload Your File", file_types=['.pdf', '.txt', '.docx', '.csv', '.json', '.pptx', '.xml', '.xlsx'], file_count='multiple')
 
     process_btn = gr.Button("Process Document")
