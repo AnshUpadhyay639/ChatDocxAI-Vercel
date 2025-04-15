@@ -1,3 +1,15 @@
+---
+title: ChatDocxAI
+emoji: 📄
+colorFrom: blue
+colorTo: purple
+sdk: gradio
+sdk_version: "4.27.0"
+app_file: app.py
+pinned: false
+---
+
+
 # ChatDocxAI
 
 ChatDocxAI is an advanced document analysis and question-answering system that leverages the power of Google's Gemini AI to provide intelligent insights from your documents. This versatile tool allows you to upload various document formats and engage in natural conversations about their contents. Whether you're analyzing research papers, business reports, or any other document type, ChatDocxAI helps you extract meaningful information through simple questions.
