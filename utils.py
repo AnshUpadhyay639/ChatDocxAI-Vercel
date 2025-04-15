@@ -26,13 +26,13 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 
 
 def authenticate():
-    """Authenticates with the Google Generative AI API using an API key."""
-    api_key = os.environ.get("GOOGLE_API_KEY")
-    if not api_key:
-        api_key = getpass.getpass("Enter your API Key: ")
-    
-    client = genai.Client(api_key=api_key)
-    return client
+  """Authenticates with the Google Generative AI API using an API key."""
+  api_key = os.environ.get("GOOGLE_API_KEY")
+  if not api_key:
+    api_key = getpass.getpass("Enter your API Key: ")
+  
+  client = genai.Client(api_key=api_key)
+  return client
 
 
 def load_documents_gradio(uploaded_files):
