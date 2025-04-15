@@ -1,4 +1,4 @@
-gradio
+gradio=5.25.1
 google-genai
 langchain
 langchain-community
