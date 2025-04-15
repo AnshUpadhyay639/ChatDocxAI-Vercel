@@ -1,4 +1,5 @@
 gradio
+pydantic==2.10.6
 google-genai
 langchain
 langchain-community
