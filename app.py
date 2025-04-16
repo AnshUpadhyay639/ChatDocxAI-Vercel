@@ -60,11 +60,24 @@ css="""
 #micINP {
   background-color: #FFCCCB;
 }
+
+#heading {
+text-align: center;
+color: #FFCCCB;
+font-size: 30px;
+font-weight: bold;
+margin: 20px;
+}
+
+#submit {
+background-color: #FFCCCB;
+}
+
 """
 
 with gr.Blocks(css=css, theme='NoCrypt/miku') as demo:
-  gr.Markdown("## Ask Questions from Your Uploaded Documents")
-  file_input = gr.File(label="Upload Your File", file_types=['.pdf', '.txt', '.docx', '.csv', '.json', '.pptx', '.xml', '.xlsx'], file_count='multiple')
+  gr.Markdown("## Ask Questions from Your Uploaded Documents", elem_id="heading")
+  file_input = gr.File(label="Upload Your File", file_types=['.pdf', '.txt', '.docx', '.csv', '.json', '.pptx', '.xml', '.xlsx'], file_count='multiple', elem_id="input")
 
   process_btn = gr.Button("Process Document")
   status = gr.Textbox(label="Processing Status")
@@ -73,12 +86,12 @@ with gr.Blocks(css=css, theme='NoCrypt/miku') as demo:
 
   with gr.Row():
     text_question = gr.Textbox(placeholder="Type your question...", scale=9, show_label=False)
-    mic_btn = gr.Button("🎤", scale=1, elem_id="micbttn")
+    mic_btn = gr.Button("🎙️", scale=1, elem_id="micbttn")
   
   audio_input = gr.Audio(sources=["microphone"], type="numpy", visible=False, label=None, elem_id="micINP")
   
-  submit_btn = gr.Button("Submit")
-  answer = gr.Markdown()
+  submit_btn = gr.Button("Submit", elem_id="submit")
+  answer = gr.Markdown(elem_id="answer")
 
   process_btn.click(upload_and_process, inputs=file_input, outputs=status)
   mic_btn.click(show_audio, outputs=audio_input)
