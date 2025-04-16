@@ -62,7 +62,7 @@ css="""
 }
 
 #heading {
-text-align: center;
+text-align: center !important;
 color: #FFCCCB;
 font-size: 30px;
 font-weight: bold;
