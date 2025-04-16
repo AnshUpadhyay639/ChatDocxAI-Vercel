@@ -12,6 +12,7 @@ warnings.filterwarnings("ignore")
 from google import genai
 from google.genai import types
 from sentence_transformers import SentenceTransformer
+from transformers import pipeline
 from langchain_community.document_loaders import(
     UnstructuredPDFLoader,
     TextLoader,
@@ -139,3 +140,20 @@ def ask_gemini(prompt, client):
     config=types.GenerateContentConfig(max_output_tokens=2048, temperature=0.5, seed=42),
   )
   return response.text
+
+# Speech2Text:
+def transcribe(audio, model="openai/whisper-base.en"):
+  if audio is None:
+    raise ValueError("No audio detected!")
+  
+  transcriber = pipeline("automatic-speech-recognition", model=model)
+  sr, y = audio # Sampling rate (KHz) and y= amplitude array
+
+  if y.ndim > 1: # Convert to Mono (CH=1) if Stereo (CH=2; L & R)
+    y = y.mean(1)
+
+  y = y.astype(np.float32)
+  y /= np.max(np.abs(y)) # Normalizing the amplitude values in range [-1,1]
+
+  result = transcriber({"sampling_rate" : sr, "raw" : y})
+  return result["text"]

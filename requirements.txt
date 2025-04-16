@@ -12,3 +12,6 @@ unstructured[docx]
 unstructured[ppt]
 unstructured[excel]
 unstructured[xml]
+torch
+torchaudio
+transformers
