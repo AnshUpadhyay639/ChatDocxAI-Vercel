@@ -59,10 +59,12 @@ python app.py
 ```
 
 2. The application will start and provide you with two URLs:
-   - A local URL (http://127.0.0.1:7860) for local access
-   - A public URL (https://xxx.gradio.live) that anyone can access
+   - A local URL (Eg. http://127.0.0.1:7860) for local access
+   - A public URL (Eg. https://xxx.gradio.live) that anyone can access [Works Temporarily]
    
-   You can share the public URL with others to let them interact with your document Q&A system.
+   This code is also uploaded in Hugging Face spaces and can be accessed via this global link if you dont wanna run it yourself: (https://huggingface.co/spaces/Codegeass321/ChatDocxAI)
+
+   You can share the global URL with others to let them interact with my document Q&A system.
 
 3. Upload your documents using the file upload interface
 
