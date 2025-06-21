@@ -1,0 +1,248 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+  --font-vogue: Didot, "Bodoni MT", "Didot LT STD", "Hoefler Text", Garamond, Times, serif;
+}
+
+/* 3 jumping dots animation */
+.dot {
+  animation: dot-bounce 1s infinite !important;
+}
+.dot:nth-child(1) { animation-delay: 0s !important; }
+.dot:nth-child(2) { animation-delay: 0.2s !important; }
+.dot:nth-child(3) { animation-delay: 0.4s !important; }
+
+@keyframes dot-bounce {
+  0%, 80%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-8px); }
+}
+
+:root {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+  min-height: 100vh;
+  min-width: 100vw;
+  width: 100vw;
+  height: auto;
+  position: static;
+  top: unset;
+  left: unset;
+  z-index: unset;
+  background-image: url('/bg.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  /* Add padding to ensure space for scrolling and next section */
+  padding-bottom: 8vh;
+}
+
+/* Transparent glassmorphic scrollbar for chat message area */
+::-webkit-scrollbar {
+  width: 8px;
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.18);
+  border-radius: 8px;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255,255,255,0.15);
+}
+/* For Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,0.18) transparent;
+}
+
+.liquid-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0%;
+  height: 100%;
+  background: linear-gradient(90deg, #60a5fa 60%, #2563eb 100%);
+  opacity: 0.3;
+  border-radius: 1rem;
+  z-index: 1;
+  animation: liquidHorizontalLoad 2s infinite linear;
+}
+
+@keyframes liquidHorizontalLoad {
+  0% {
+    width: 0%;
+  }
+  50% {
+    width: 100%;
+  }
+  100% {
+    width: 0%;
+  }
+}
+
+.flip-animate-vert {
+  animation: flipX 0.18s linear;
+  transform-style: preserve-3d;
+}
+
+@keyframes flipX {
+  0% {
+    transform: rotateX(0deg);
+  }
+  50% {
+    transform: rotateX(90deg);
+    opacity: 0.5;
+  }
+  100% {
+    transform: rotateX(0deg);
+    opacity: 1;
+  }
+}
+
+.flip-animate-inertia {
+  animation: flipInertia 0.7s cubic-bezier(0.23, 1.2, 0.32, 1) !important;
+  transform-style: preserve-3d;
+}
+
+@keyframes flipInertia {
+  0% {
+    transform: rotateX(0deg);
+  }
+  60% {
+    transform: rotateX(100deg) scale(1.1);
+    opacity: 0.7;
+  }
+  80% {
+    transform: rotateX(80deg) scale(0.98);
+    opacity: 0.9;
+  }
+  100% {
+    transform: rotateX(0deg) scale(1);
+    opacity: 1;
+  }
+}
+
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.vogue-font {
+  font-family: var(--font-vogue);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-stretch: condensed;
+}
+
+section.hero-section {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  /* Reduce bottom margin to allow more space for next section */
+  margin-bottom: 0;
+}
+
+section.main-chat-section {
+  min-height: 80vh;
+  padding-top: 4vh;
+  padding-bottom: 4vh;
+}
+
+.cursive-welcome {
+  font-family: 'Perfecto Calligraphy', 'Brush Script MT', cursive, 'Comic Sans MS', 'Dancing Script', 'Pacifico', 'Great Vibes', 'Satisfy', 'Caveat', 'Indie Flower', 'Segoe Script', 'Apple Chancery', sans-serif;
+  font-style: italic;
+  text-align: center;
+}
+
+.sleek-desc {
+  font-family: var(--font-pacifico), 'Segoe Script', 'Apple Chancery', cursive, sans-serif;
+  font-style: italic;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  text-align: center;
+}
+
+.matte-texture {
+  color: #111; /* or your preferred initial text color */
+  background-image: url('/texture.png');
+  background-size: 100% 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  -webkit-background-clip: text;
+  background-clip: text;
+  transition: color 0.5s, -webkit-text-fill-color 0.5s;
+}
+
+.matte-texture:hover {
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+.fullscreen-bg {
+  background-image: url('/fullscreen.png') !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  background-color: #111 !important;
+  backdrop-filter: blur(18px) saturate(1.2) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(1.2) !important;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18);
+  border-radius: 1.5rem;
+  background-clip: padding-box;
+  opacity: 0.98;
+}
+
+@keyframes pop {
+  0% { transform: scale(0.8); opacity: 0; }
+  60% { transform: scale(1.05); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+.animate-pop {
+  animation: pop 0.35s cubic-bezier(.4,2,.6,1);
+}
+
+/* Strongly visible listening bar for debugging and clarity */
+.listening-bar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 1rem;
+  background: linear-gradient(270deg, #fff 0%, #60a5fa 25%, #2563eb 50%, #60a5fa 75%, #fff 100%);
+  background-size: 400% 100%;
+  background-position: 200% 0;
+  opacity: 0.85;
+  z-index: 50;
+  overflow: hidden;
+  border: 2px solid #2563eb;
+  box-shadow: 0 0 16px 4px #60a5fa99, 0 0 0 4px #fff8;
+  animation: listeningBarShimmer 1.2s infinite linear;
+}
+
+@keyframes listeningBarShimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}

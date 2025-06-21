@@ -37,29 +37,38 @@ def authenticate():
 
 
 def load_documents_gradio(uploaded_files):
-  docs = []
-  for file in uploaded_files:
-    file_path = file.name
-    # Detect type and load accordingly
-    if file_path.lower().endswith('.pdf'):
-      docs.extend(UnstructuredPDFLoader(file_path).load())
-    elif file_path.lower().endswith('.txt'):
-      docs.extend(TextLoader(file_path).load())
-    elif file_path.lower().endswith('.csv'):
-      docs.extend(CSVLoader(file_path).load())
-    elif file_path.lower().endswith('.json'):
-      docs.extend(JSONLoader(file_path).load())
-    elif file_path.lower().endswith('.pptx'):
-      docs.extend(UnstructuredPowerPointLoader(file_path).load())
-    elif file_path.lower().endswith('.xlsx'):
-      docs.extend(UnstructuredExcelLoader(file_path).load())
-    elif file_path.lower().endswith('.xml'):
-      docs.extend(UnstructuredXMLLoader(file_path).load())
-    elif file_path.lower().endswith('.docx'):
-      docs.extend(UnstructuredWordDocumentLoader(file_path).load())
-    else:
-      print(f'Unsupported File Type: {file_path}')
-  return docs
+    docs = []
+    for file in uploaded_files:
+        # For FastAPI UploadFile, save to a temp file
+        if hasattr(file, "filename") and hasattr(file, "file"):
+            import tempfile
+            suffix = os.path.splitext(file.filename)[1]
+            with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
+                tmp.write(file.file.read())
+                tmp_path = tmp.name
+            file_path = tmp_path
+        else:
+            file_path = file.name  # For Gradio or other file types
+        # Detect type and load accordingly
+        if file_path.lower().endswith('.pdf'):
+            docs.extend(UnstructuredPDFLoader(file_path).load())
+        elif file_path.lower().endswith('.txt'):
+            docs.extend(TextLoader(file_path).load())
+        elif file_path.lower().endswith('.csv'):
+            docs.extend(CSVLoader(file_path).load())
+        elif file_path.lower().endswith('.json'):
+            docs.extend(JSONLoader(file_path).load())
+        elif file_path.lower().endswith('.pptx'):
+            docs.extend(UnstructuredPowerPointLoader(file_path).load())
+        elif file_path.lower().endswith('.xlsx'):
+            docs.extend(UnstructuredExcelLoader(file_path).load())
+        elif file_path.lower().endswith('.xml'):
+            docs.extend(UnstructuredXMLLoader(file_path).load())
+        elif file_path.lower().endswith('.docx'):
+            docs.extend(UnstructuredWordDocumentLoader(file_path).load())
+        else:
+            print(f'Unsupported File Type: {file_path}')
+    return docs
 
 
 def split_documents(docs, chunk_size=500, chunk_overlap=100):

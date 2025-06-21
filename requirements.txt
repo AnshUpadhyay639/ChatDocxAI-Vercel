@@ -15,3 +15,7 @@ unstructured[xml]
 torch
 torchaudio
 transformers
+fastapi
+uvicorn
+numpy
+python-dotenv
