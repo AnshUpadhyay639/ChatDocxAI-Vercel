@@ -1,0 +1,5 @@
+.env
+.env.local
+# Ignore all .env files in any subdirectory
+**/.env
+**/.env.*
