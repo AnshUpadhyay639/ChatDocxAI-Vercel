@@ -215,7 +215,7 @@ export default function Home() {
 			}
 		}
 		try {
-			const res = await fetch("http://localhost:8000/ask", {
+			const res = await fetch("https://chatdocxai-render.onrender.com/ask", {
 				method: "POST",
 				body: formData,
 			});
