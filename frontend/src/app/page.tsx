@@ -280,7 +280,7 @@ export default function Home() {
 		const formData = new FormData();
 		selectedFiles.forEach((f) => formData.append("files", f));
 		try {
-			const res = await fetch("http://localhost:8000/upload", {
+			const res = await fetch("https://chatdocxai-render.onrender.com/upload", {
 				method: "POST",
 				body: formData,
 			});
