@@ -192,13 +192,14 @@ export default function Home() {
 		// Add user message (text or placeholder for audio)
 		setMessages((msgs) => [...msgs, { role: "user", content: input || "[audio]" }]);
 		setLoading(true);
-		const formData = new FormData();
+		const formData = new FormData(); // To store the text input OR audio blob in K-V pairs & send to backend
 		if (input.trim()) {
 			formData.append("text", input);
 		}
 		if (audioBlob) {
 			formData.append("audio", audioBlob, "audio.webm");
 		}
+		// Clear input and audio blob
 		setInput("");
 		setAudioBlob(null);
 		// Wait for the UI to update so the animation is visible
