@@ -1,10 +1,10 @@
 gradio
 pydantic==2.10.6 # Stable version as of now
-google-genai
-langchain
-langchain-community
-langchain-google-genai
-google-generativeai
+google-genai #
+langchain #
+langchain-community #
+langchain-google-genai #
+google-generativeai #
 faiss-cpu
 sentence-transformers
 unstructured[pdf]
@@ -12,10 +12,11 @@ unstructured[docx]
 unstructured[ppt]
 unstructured[excel]
 unstructured[xml]
-torch
-torchaudio
-transformers
-fastapi
-uvicorn
-numpy
+torch #
+torchaudio #
+transformers #
+fastapi #
+uvicorn #
+numpy #
 python-dotenv
+pydub
