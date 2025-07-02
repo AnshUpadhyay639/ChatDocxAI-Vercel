@@ -216,7 +216,7 @@ export default function Home() {
 			}
 		}
 		try {
-			const res = await fetch("https://huggingface.co/spaces/Codegeass321/ChatDocxAI/ask", {
+			const res = await fetch("https://codegeass321-chatdocxai.hf.space/ask", {
 				method: "POST",
 				body: formData,
 			});
@@ -280,7 +280,7 @@ export default function Home() {
 		const formData = new FormData();
 		selectedFiles.forEach((f) => formData.append("files", f));
 		try {
-			const res = await fetch("https://huggingface.co/spaces/Codegeass321/ChatDocxAI/upload", {
+			const res = await fetch("https://codegeass321-chatdocxai.hf.space/upload", {
 				method: "POST",
 				body: formData,
 			});
