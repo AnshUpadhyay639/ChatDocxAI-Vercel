@@ -456,8 +456,8 @@ export default function Home() {
 	const [typedContext, setTypedContext] = useState("");
 
 	// Function to clear document context on the backend
-	const clearDocumentContext = async () => {
-		if (!confirm("Clear the current document context? You'll need to upload a document again.")) {
+	const clearDocumentContext = async (silent = false) => {
+		if (!silent && !confirm("Clear the current document context? You'll need to upload a document again.")) {
 			return;
 		}
 		
@@ -473,18 +473,33 @@ export default function Home() {
 			const data = await res.json();
 			console.log('Clear context response:', data);
 			
-			setMessages((msgs) => [
-				...msgs,
-				{ role: "assistant", content: data.message || "Document context cleared." },
-			]);
+			if (!silent) {
+				setMessages((msgs) => [
+					...msgs,
+					{ role: "assistant", content: data.message || "Document context cleared." },
+				]);
+			}
 		} catch (error) {
 			console.error('Error clearing context:', error);
-			setMessages((msgs) => [
-				...msgs,
-				{ role: "assistant", content: "Error clearing document context." },
-			]);
+			if (!silent) {
+				setMessages((msgs) => [
+					...msgs,
+					{ role: "assistant", content: "Error clearing document context." },
+				]);
+			}
 		}
 	};
+	
+	// Auto-clear document context on page load/refresh
+	useEffect(() => {
+		// Clear document context silently on page load/refresh
+		// This ensures no old document context is retained between sessions
+		console.log("Auto-clearing document context on page load");
+		clearDocumentContext(true);
+		
+		// We don't clear context when user switches tabs to maintain context
+		// during brief tab navigation
+	}, []);
 
 	useEffect(() => {
 		setTypedContext("");
@@ -545,6 +560,8 @@ export default function Home() {
           setShowModal(false);
           setSuccessMsg('Login successful!');
           playSound('/rightpass.mp3');
+          // Clear document context when user logs in
+          clearDocumentContext(true);
           setTimeout(() => setSuccessMsg(''), 2500);
         }
       } else {
@@ -918,7 +935,7 @@ function FaceWithEyes() {
 						<button
 							type="button"
 							className="h-10 w-10 flex items-center justify-center rounded-full border border-input bg-background hover:bg-background/50 text-xl text-red-500 dark:text-red-400"
-							onClick={clearDocumentContext}
+							onClick={() => clearDocumentContext(false)}
 							disabled={uploading || loading}
 							aria-label="Clear document context"
 							title="Clear document context"
