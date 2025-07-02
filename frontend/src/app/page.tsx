@@ -278,9 +278,17 @@ export default function Home() {
 			}
 		} catch (error) {
 			console.error('Ask API error:', error);
+			// Extract just the message part if it's an API error with status 400
+			let errorMessage = error instanceof Error ? error.message : 'Unknown error';
+			
+			// For the "Please upload a document first" error, show only that message
+			if (errorMessage.includes("Please upload and process a document first")) {
+				errorMessage = "Please upload and process a document first.";
+			}
+			
 			setMessages((msgs) => [
 				...msgs,
-				{ role: "assistant", content: `Error contacting backend: ${error instanceof Error ? error.message : 'Unknown error'}` },
+				{ role: "assistant", content: errorMessage },
 			]);
 		}
 		setLoading(false);
@@ -344,10 +352,16 @@ export default function Home() {
 			]);
 		} catch (error) {
 			console.error('Upload error:', error);
-			const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+			let errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+			
+			// Simplify error messages if needed
+			if (errorMessage.includes("Please upload and process a document first")) {
+				errorMessage = "Please upload and process a document first.";
+			}
+			
 			setMessages((msgs) => [
 				...msgs,
-				{ role: "assistant", content: `Error uploading file(s): ${errorMessage}` },
+				{ role: "assistant", content: errorMessage },
 			]);
 		} finally {
 			setUploading(false);
@@ -978,14 +992,6 @@ function FaceWithEyes() {
 						)}
 						{audioBlob && <span className="text-xs text-gray-600 dark:text-gray-300">Audio ready to send</span>}
 						{recordError && <span className="text-xs text-red-600 ml-2">{recordError}</span>}
-						{/* Backend test button */}
-						<button 
-							type="button" 
-							className="ml-auto text-xs bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600 transition"
-							onClick={testBackendConnection}
-						>
-							Test Backend
-						</button>
 					</div>
 				</div>
 				{/* Footer with copyright and creator credit */}
@@ -1133,18 +1139,3 @@ function formatAssistantMessage(text: string) {
 	// Add more formatting as needed
 	return html;
 }
-
-// Function to test backend connectivity
-const testBackendConnection = async () => {
-	try {
-		const res = await fetch("https://codegeass321-backendserver.hf.space/api/status");
-		const data = await res.json();
-		console.log("Backend status:", data);
-		alert(`Backend Status: ${JSON.stringify(data, null, 2)}`);
-		return data;
-	} catch (error) {
-		console.error("Backend connection test failed:", error);
-		alert(`Backend connection failed: ${error instanceof Error ? error.message : String(error)}`);
-		return null;
-	}
-};
