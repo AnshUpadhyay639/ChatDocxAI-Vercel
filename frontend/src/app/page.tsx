@@ -216,7 +216,7 @@ export default function Home() {
 			}
 		}
 		try {
-			const res = await fetch("https://codegeass321-chatdocxai.hf.space/ask", {
+			const res = await fetch("https://codegeass321-backendserver.hf.space/ask", {
 				method: "POST",
 				headers: {
 					"Accept": "application/json",
@@ -295,7 +295,7 @@ export default function Home() {
 		const formData = new FormData();
 		selectedFiles.forEach((f) => formData.append("files", f));
 		try {
-			const res = await fetch("https://codegeass321-chatdocxai.hf.space/upload", {
+			const res = await fetch("https://codegeass321-backendserver.hf.space/upload", {
 				method: "POST",
 				headers: {
 					"Accept": "application/json",
