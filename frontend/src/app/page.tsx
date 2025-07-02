@@ -218,9 +218,23 @@ export default function Home() {
 		try {
 			const res = await fetch("https://codegeass321-chatdocxai.hf.space/ask", {
 				method: "POST",
+				headers: {
+					"Accept": "application/json",
+					"Origin": window.location.origin
+				},
 				body: formData,
 			});
+			
+			// Check if response is OK (status in the range 200-299)
+			if (!res.ok) {
+				console.error('API Error:', res.status, res.statusText);
+				const errorData = await res.json().catch(() => ({ message: 'Unknown error' }));
+				throw new Error(`API Error ${res.status}: ${errorData.message || res.statusText}`);
+			}
+			
 			const data = await res.json();
+			console.log('API Response:', data); // Debug the response
+			
 			setMessages((msgs) => {
 				// If the last user message was audio, replace its content with the transcription
 				if (
@@ -262,10 +276,11 @@ export default function Home() {
 						console.error('Fetch chat error:', err);
 					});
 			}
-		} catch {
+		} catch (error) {
+			console.error('Ask API error:', error);
 			setMessages((msgs) => [
 				...msgs,
-				{ role: "assistant", content: "Error contacting backend." },
+				{ role: "assistant", content: `Error contacting backend: ${error instanceof Error ? error.message : 'Unknown error'}` },
 			]);
 		}
 		setLoading(false);
@@ -282,17 +297,32 @@ export default function Home() {
 		try {
 			const res = await fetch("https://codegeass321-chatdocxai.hf.space/upload", {
 				method: "POST",
+				headers: {
+					"Accept": "application/json",
+					"Origin": window.location.origin
+				},
 				body: formData,
 			});
+			
+			// Check if response is OK (status in the range 200-299)
+			if (!res.ok) {
+				console.error('Upload API Error:', res.status, res.statusText);
+				const errorData = await res.json().catch(() => ({ message: 'Unknown error' }));
+				throw new Error(`Upload API Error ${res.status}: ${errorData.message || res.statusText}`);
+			}
+			
 			const data = await res.json();
+			console.log('Upload API Response:', data); // Debug the response
+			
 			setMessages((msgs) => [
 				...msgs,
 				{ role: "assistant", content: data.message || "File(s) uploaded!" },
 			]);
-		} catch {
+		} catch (error) {
+			console.error('Upload error:', error);
 			setMessages((msgs) => [
 				...msgs,
-				{ role: "assistant", content: "Error uploading file(s)." },
+				{ role: "assistant", content: `Error uploading file(s): ${error instanceof Error ? error.message : 'Unknown error'}` },
 			]);
 		}
 		setUploading(false);
