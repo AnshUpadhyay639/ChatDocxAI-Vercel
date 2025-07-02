@@ -216,7 +216,7 @@ export default function Home() {
 			}
 		}
 		try {
-			const res = await fetch("https://codegeass321-backendserver-8000.hf.space/ask", {
+			const res = await fetch("https://codegeass321-backendserver.hf.space/api/ask", {
 				method: "POST",
 				headers: {
 					"Accept": "application/json",
@@ -303,7 +303,7 @@ export default function Home() {
 		
 		try {
 			console.log("Sending upload request to backend...");
-			const res = await fetch("https://codegeass321-backendserver-8000.hf.space/upload", {
+			const res = await fetch("https://codegeass321-backendserver.hf.space/api/upload", {
 				method: "POST",
 				// Don't set Content-Type header - browser will set it with boundary for multipart/form-data
 				headers: {
@@ -1137,7 +1137,7 @@ function formatAssistantMessage(text: string) {
 // Function to test backend connectivity
 const testBackendConnection = async () => {
 	try {
-		const res = await fetch("https://codegeass321-backendserver-8000.hf.space/status");
+		const res = await fetch("https://codegeass321-backendserver.hf.space/api/status");
 		const data = await res.json();
 		console.log("Backend status:", data);
 		alert(`Backend Status: ${JSON.stringify(data, null, 2)}`);
