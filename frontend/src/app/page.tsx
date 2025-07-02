@@ -455,6 +455,37 @@ export default function Home() {
 		"Upload your documents and ask questions using the power of Retrieval-Augmented Generation and Gemini AI. Experience seamless document understanding, instant answers, and multilingual support—all in one intelligent chat platform.";
 	const [typedContext, setTypedContext] = useState("");
 
+	// Function to clear document context on the backend
+	const clearDocumentContext = async () => {
+		if (!confirm("Clear the current document context? You'll need to upload a document again.")) {
+			return;
+		}
+		
+		try {
+			const res = await fetch("https://codegeass321-backendserver.hf.space/api/clear", {
+				method: "POST",
+				headers: {
+					"Accept": "application/json",
+					"Origin": window.location.origin
+				}
+			});
+			
+			const data = await res.json();
+			console.log('Clear context response:', data);
+			
+			setMessages((msgs) => [
+				...msgs,
+				{ role: "assistant", content: data.message || "Document context cleared." },
+			]);
+		} catch (error) {
+			console.error('Error clearing context:', error);
+			setMessages((msgs) => [
+				...msgs,
+				{ role: "assistant", content: "Error clearing document context." },
+			]);
+		}
+	};
+
 	useEffect(() => {
 		setTypedContext("");
 		let i = 0;
@@ -879,6 +910,32 @@ function FaceWithEyes() {
 									d="M8 12.5V17a4 4 0 0 0 8 0V7a4 4 0 0 0-8 0v9a2 2 0 0 0 4 0V8.5"
 									strokeLinecap="round"
 									strokeLinejoin="round"
+								/>
+							</svg>
+						</button>
+						
+						{/* Clear Document button */}
+						<button
+							type="button"
+							className="h-10 w-10 flex items-center justify-center rounded-full border border-input bg-background hover:bg-background/50 text-xl text-red-500 dark:text-red-400"
+							onClick={clearDocumentContext}
+							disabled={uploading || loading}
+							aria-label="Clear document context"
+							title="Clear document context"
+						>
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								width="20"
+								height="20"
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke="currentColor"
+								strokeWidth="2"
+							>
+								<path
+									strokeLinecap="round"
+									strokeLinejoin="round"
+									d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
 								/>
 							</svg>
 						</button>
