@@ -216,7 +216,7 @@ export default function Home() {
 			}
 		}
 		try {
-			const res = await fetch("https://codegeass321-backendserver.hf.space/ask", {
+			const res = await fetch("https://codegeass321-backendserver.hf.space/proxy/8000/ask", {
 				method: "POST",
 				headers: {
 					"Accept": "application/json",
@@ -293,10 +293,19 @@ export default function Home() {
 		setDocxProcessing(true); // Start docx processing animation
 		setUploading(true);
 		const formData = new FormData();
-		selectedFiles.forEach((f) => formData.append("files", f));
+		
+		// Log files being uploaded for debugging
+		console.log(`Uploading ${selectedFiles.length} files:`);
+		selectedFiles.forEach((f, index) => {
+			console.log(`File ${index + 1}: ${f.name}, Type: ${f.type}, Size: ${f.size} bytes`);
+			formData.append("files", f); // Make sure "files" matches the backend parameter name
+		});
+		
 		try {
-			const res = await fetch("https://codegeass321-backendserver.hf.space/upload", {
+			console.log("Sending upload request to backend...");
+			const res = await fetch("https://codegeass321-backendserver.hf.space/proxy/8000/upload", {
 				method: "POST",
+				// Don't set Content-Type header - browser will set it with boundary for multipart/form-data
 				headers: {
 					"Accept": "application/json",
 					"Origin": window.location.origin
@@ -307,8 +316,23 @@ export default function Home() {
 			// Check if response is OK (status in the range 200-299)
 			if (!res.ok) {
 				console.error('Upload API Error:', res.status, res.statusText);
-				const errorData = await res.json().catch(() => ({ message: 'Unknown error' }));
-				throw new Error(`Upload API Error ${res.status}: ${errorData.message || res.statusText}`);
+				let errorMessage = 'Unknown error';
+				try {
+					const errorData = await res.json();
+					errorMessage = errorData.message || res.statusText;
+					console.error('Error details:', errorData);
+				} catch (jsonError) {
+					console.error('Could not parse error response as JSON', jsonError);
+					try {
+						const textError = await res.text();
+						console.error('Error response text:', textError);
+						errorMessage = textError || res.statusText;
+					} catch (textError) {
+						console.error('Could not get error response text', textError);
+					}
+				}
+				
+				throw new Error(`Upload API Error ${res.status}: ${errorMessage}`);
 			}
 			
 			const data = await res.json();
@@ -320,13 +344,15 @@ export default function Home() {
 			]);
 		} catch (error) {
 			console.error('Upload error:', error);
+			const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
 			setMessages((msgs) => [
 				...msgs,
-				{ role: "assistant", content: `Error uploading file(s): ${error instanceof Error ? error.message : 'Unknown error'}` },
+				{ role: "assistant", content: `Error uploading file(s): ${errorMessage}` },
 			]);
+		} finally {
+			setUploading(false);
+			setDocxProcessing(false); // End docx processing animation
 		}
-		setUploading(false);
-		setDocxProcessing(false); // End docx processing animation
 	};
 
 	// Play sound utility
@@ -952,6 +978,14 @@ function FaceWithEyes() {
 						)}
 						{audioBlob && <span className="text-xs text-gray-600 dark:text-gray-300">Audio ready to send</span>}
 						{recordError && <span className="text-xs text-red-600 ml-2">{recordError}</span>}
+						{/* Backend test button */}
+						<button 
+							type="button" 
+							className="ml-auto text-xs bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600 transition"
+							onClick={testBackendConnection}
+						>
+							Test Backend
+						</button>
 					</div>
 				</div>
 				{/* Footer with copyright and creator credit */}
@@ -1099,3 +1133,18 @@ function formatAssistantMessage(text: string) {
 	// Add more formatting as needed
 	return html;
 }
+
+// Function to test backend connectivity
+const testBackendConnection = async () => {
+	try {
+		const res = await fetch("https://codegeass321-backendserver.hf.space/proxy/8000/status");
+		const data = await res.json();
+		console.log("Backend status:", data);
+		alert(`Backend Status: ${JSON.stringify(data, null, 2)}`);
+		return data;
+	} catch (error) {
+		console.error("Backend connection test failed:", error);
+		alert(`Backend connection failed: ${error instanceof Error ? error.message : String(error)}`);
+		return null;
+	}
+};
