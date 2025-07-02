@@ -492,7 +492,7 @@ export default function Home() {
 	
 	// Auto-clear document context on page load/refresh
 	useEffect(() => {
-		// Clear document context silently on page load/refresh
+		// Clear document context silently on page load
 		// This ensures no old document context is retained between sessions
 		console.log("Auto-clearing document context on page load");
 		clearDocumentContext(true);
@@ -560,9 +560,15 @@ export default function Home() {
           setShowModal(false);
           setSuccessMsg('Login successful!');
           playSound('/rightpass.mp3');
-          // Clear document context when user logs in
-          clearDocumentContext(true);
-          setTimeout(() => setSuccessMsg(''), 2500);
+          
+          // First clear document context
+          await clearDocumentContext(true);
+          
+          // Set a brief timeout to show the success message before refreshing
+          setTimeout(() => {
+            // Force page refresh to ensure clean state
+            window.location.reload();
+          }, 1000);
         }
       } else {
         const { error } = await supabase.auth.signUp({ email, password });
@@ -580,6 +586,8 @@ export default function Home() {
   }
 
   const handleLogout = async () => {
+    // Clear document context before signing out
+    await clearDocumentContext(true);
     await supabase.auth.signOut();
     window.location.reload();
   };
@@ -1148,7 +1156,7 @@ function SimpleSidebar({ chatHistory, setMessages, user, setChatHistory }: { cha
             }}
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6 7h12M9 7V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3m2 0v12a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V7h12z" />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 7h12M9 7V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3m2 0v12a2 2 0 0 1-2 2H8a2 2 0 01-2-2V7h12z" />
               <path strokeLinecap="round" strokeLinejoin="round" d="M10 11v6m4-6v6" />
             </svg>
           </button>
