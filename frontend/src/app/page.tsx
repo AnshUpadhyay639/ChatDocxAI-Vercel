@@ -529,21 +529,20 @@ export default function Home() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [successMsg, setSuccessMsg] = useState('');
-  const [authReady, setAuthReady] = useState(false);
   
   // Initialize auth state immediately
   useEffect(() => {
     // Check for existing session immediately
     supabase.auth.getSession().then(({ data }) => {
       console.log("Supabase session:", data.session);
-      setAuthReady(true); // Mark auth as ready regardless of result
-    }).catch(() => {
-      setAuthReady(true); // Ensure UI is shown even if there's an error
+    }).catch((error) => {
+      console.error("Failed to get session:", error);
     });
     
     // Listen for auth changes
     const { data: listener } = supabase.auth.onAuthStateChange(() => {
-      setAuthReady(true); // Update auth ready state on any auth change
+      // Auth state changed
+      console.log("Auth state changed");
     });
     
     return () => { listener?.subscription.unsubscribe(); };
