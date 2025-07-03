@@ -71,7 +71,21 @@ export default function AuthButtonsContainer() {
           }, 1000);
         }
       } else {
-        const { error } = await supabase.auth.signUp({ email, password });
+        // Get the site URL for redirects - prioritize env var, fallback to window.location.origin
+        const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || (typeof window !== 'undefined' ? window.location.origin : '');
+        const redirectTo = `${siteUrl}/auth/callback`;
+        
+        console.log("Using redirect URL:", redirectTo);
+        
+        // Sign up with redirect URL to fix localhost issue
+        const { error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            emailRedirectTo: redirectTo
+          }
+        });
+        
         if (error) setError(error.message);
         else {
           setShowModal(false);
