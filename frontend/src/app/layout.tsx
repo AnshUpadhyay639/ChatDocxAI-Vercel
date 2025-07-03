@@ -4,6 +4,7 @@ import { Playfair_Display } from "next/font/google";
 import { Pacifico } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "./AuthContext";
+import AuthButtonsContainer from "./AuthButtonsContainer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -42,7 +43,10 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${playfair.variable} ${pacifico.variable} antialiased`}
       >
-        <AuthProvider>{children}</AuthProvider>
+        <AuthProvider>
+          <AuthButtonsContainer />
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );
