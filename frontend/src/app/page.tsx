@@ -532,9 +532,24 @@ export default function Home() {
   
   // Initialize auth state immediately
   useEffect(() => {
+    // Force buttons to be interactive immediately, even during animations
+    const forceButtonsInteractive = () => {
+      const authButtons = document.querySelectorAll('.fixed.top-4.right-4 button');
+      authButtons.forEach(button => {
+        if (button instanceof HTMLElement) {
+          button.style.pointerEvents = 'auto';
+        }
+      });
+    };
+    
+    // Run immediately and also after a slight delay to ensure it works after React updates
+    forceButtonsInteractive();
+    const timeoutId = setTimeout(forceButtonsInteractive, 100);
+    
     // Check for existing session immediately
     supabase.auth.getSession().then(({ data }) => {
       console.log("Supabase session:", data.session);
+      forceButtonsInteractive(); // Try again after session is loaded
     }).catch((error) => {
       console.error("Failed to get session:", error);
     });
@@ -543,9 +558,13 @@ export default function Home() {
     const { data: listener } = supabase.auth.onAuthStateChange(() => {
       // Auth state changed
       console.log("Auth state changed");
+      forceButtonsInteractive(); // Ensure buttons remain interactive
     });
     
-    return () => { listener?.subscription.unsubscribe(); };
+    return () => {
+      clearTimeout(timeoutId);
+      listener?.subscription.unsubscribe(); 
+    };
   }, []);
 
   async function handleAuth(e: React.FormEvent) {
@@ -598,14 +617,14 @@ export default function Home() {
 
   return (
     <>
-      <div className="fixed top-4 right-4 z-50 flex gap-2 items-center">
+      <div className="fixed top-4 right-4 z-50 flex gap-2 items-center" style={{pointerEvents: 'auto'}}>
         {user ? (
           <>
-            <span className="text-gray-500 font-semibold bg-white/50 px-2 py-1 rounded">{user.email}</span>
+            <span className="text-gray-500 font-semibold">{user.email}</span>
             <button
-              className="px-3 py-1 rounded-lg bg-white/70 text-red-600 border border-blue-100 hover:bg-white/90 transition shadow-md text-sm font-medium"
+              className="px-3 py-1 rounded-lg bg-white/20 text-red-600 border border-blue-100 hover:bg-white/40 transition shadow-none text-sm font-medium backdrop-blur-sm"
               onClick={handleLogout}
-              style={{opacity: 1}}
+              style={{pointerEvents: 'auto'}}
             >
               Logout
             </button>
@@ -613,16 +632,16 @@ export default function Home() {
         ) : (
           <>
             <button
-              className="px-3 py-1 rounded bg-white/70 text-blue-900 border border-blue-200 hover:bg-white/90 transition text-sm font-medium shadow-md"
+              className="px-3 py-1 rounded bg-white/20 text-white border border-blue-200 hover:bg-white/40 transition text-sm font-medium shadow-none backdrop-blur-sm"
               onClick={() => { setIsLogin(true); setShowModal(true); }}
-              style={{opacity: 1}}
+              style={{pointerEvents: 'auto'}}
             >
               Login
             </button>
             <button
-              className="px-3 py-1 rounded bg-white/70 text-blue-900 border border-blue-200 hover:bg-white/90 transition text-sm font-medium shadow-md"
+              className="px-3 py-1 rounded bg-white/20 text-white border border-blue-200 hover:bg-white/40 transition text-sm font-medium shadow-none backdrop-blur-sm"
               onClick={() => { setIsLogin(false); setShowModal(true); }}
-              style={{opacity: 1}}
+              style={{pointerEvents: 'auto'}}
             >
               Sign Up
             </button>
@@ -630,12 +649,12 @@ export default function Home() {
         )}
       </div>
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80">
-          <form onSubmit={handleAuth} className="bg-white/90 border border-white/50 shadow-lg rounded-3xl p-8 w-full max-w-xs flex flex-col gap-4 animate-pop">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
+          <form onSubmit={handleAuth} className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-lg rounded-3xl p-8 w-full max-w-xs flex flex-col gap-4 animate-pop">
             <h2 className="text-2xl font-extrabold text-center mb-2 text-blue-700 drop-shadow cursive-welcome">{isLogin ? 'Login' : 'Sign Up'}</h2>
             <input
               type="email"
-              className="border-2 border-blue-300 rounded px-3 py-2 focus:border-blue-700 focus:ring-2 focus:ring-blue-200 bg-white"
+              className="border-2 border-blue-300 rounded px-3 py-2 focus:border-blue-700 focus:ring-2 focus:ring-blue-200"
               placeholder="Email"
               value={email}
               onChange={e => setEmail(e.target.value)}
@@ -643,7 +662,7 @@ export default function Home() {
             />
             <input
               type="password"
-              className="border-2 border-blue-300 rounded px-3 py-2 focus:border-blue-700 focus:ring-2 focus:ring-blue-200 bg-white text-blue-900"
+              className="border-2 border-blue-300 rounded px-3 py-2 focus:border-blue-700 focus:ring-2 focus:ring-blue-200 bg-white/10 backdrop-blur placeholder:text-blue-900/60 text-blue-900/90"
               placeholder="Password"
               value={password}
               onChange={e => setPassword(e.target.value)}
@@ -793,8 +812,10 @@ function FaceWithEyes() {
 
 	return (
 		<div>
-			{/* Render auth buttons independently for better responsiveness */}
-			<AuthButtons />
+			{/* Render auth buttons with high z-index for interaction */}
+			<div style={{position: 'relative', zIndex: 9999, pointerEvents: 'auto'}}>
+				<AuthButtons />
+			</div>
 			
 			{/* Hero Section */}
 			<section
