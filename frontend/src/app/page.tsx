@@ -530,40 +530,58 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [successMsg, setSuccessMsg] = useState('');
   
-  // Initialize auth state immediately
+  // Make auth buttons interactive immediately
   useEffect(() => {
-    // Force buttons to be interactive immediately, even during animations
-    const forceButtonsInteractive = () => {
-      const authButtons = document.querySelectorAll('.fixed.top-4.right-4 button');
+    // Force buttons to be interactive with high priority
+    const makeButtonsInteractive = () => {
+      // Target buttons in our specific wrapper to ensure we get the right ones
+      const authButtons = document.querySelectorAll('.auth-buttons-wrapper button');
       authButtons.forEach(button => {
         if (button instanceof HTMLElement) {
+          // Apply multiple techniques to ensure interactivity
           button.style.pointerEvents = 'auto';
+          button.style.zIndex = '10001';
+          button.style.position = 'relative';
+          button.style.cursor = 'pointer';
+          
+          // Add click event listeners directly to ensure they work
+          const onClick = button.onclick;
+          button.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (onClick) onClick.call(button, e);
+          }, { capture: true });
         }
       });
     };
     
-    // Run immediately and also after a slight delay to ensure it works after React updates
-    forceButtonsInteractive();
-    const timeoutId = setTimeout(forceButtonsInteractive, 100);
+    // Run immediately and at intervals to ensure it works consistently
+    makeButtonsInteractive();
+    const timerId = setInterval(makeButtonsInteractive, 100);
+    
+    // Also run on any window events that might affect rendering
+    window.addEventListener('load', makeButtonsInteractive);
+    window.addEventListener('resize', makeButtonsInteractive);
+    window.addEventListener('scroll', makeButtonsInteractive);
     
     // Check for existing session immediately
     supabase.auth.getSession().then(({ data }) => {
       console.log("Supabase session:", data.session);
-      forceButtonsInteractive(); // Try again after session is loaded
     }).catch((error) => {
       console.error("Failed to get session:", error);
     });
     
     // Listen for auth changes
     const { data: listener } = supabase.auth.onAuthStateChange(() => {
-      // Auth state changed
       console.log("Auth state changed");
-      forceButtonsInteractive(); // Ensure buttons remain interactive
+      makeButtonsInteractive();
     });
     
     return () => {
-      clearTimeout(timeoutId);
-      listener?.subscription.unsubscribe(); 
+      clearInterval(timerId);
+      window.removeEventListener('load', makeButtonsInteractive);
+      window.removeEventListener('resize', makeButtonsInteractive);
+      window.removeEventListener('scroll', makeButtonsInteractive);
+      listener?.subscription.unsubscribe();
     };
   }, []);
 
@@ -617,7 +635,14 @@ export default function Home() {
 
   return (
     <>
-      <div className="fixed top-4 right-4 z-50 flex gap-2 items-center" style={{pointerEvents: 'auto'}}>
+      <div 
+        className="auth-buttons-wrapper flex gap-2 items-center"
+        style={{
+          pointerEvents: 'auto',
+          position: 'relative', 
+          zIndex: 10000,
+        }}
+      >
         {user ? (
           <>
             <span className="text-gray-500 font-semibold">{user.email}</span>
@@ -811,13 +836,24 @@ function FaceWithEyes() {
 }
 
 	return (
-		<div>
-			{/* Render auth buttons with high z-index for interaction */}
-			<div style={{position: 'relative', zIndex: 9999, pointerEvents: 'auto'}}>
+		<>
+			{/* Render auth buttons completely outside the main component hierarchy */}
+			<div className="auth-buttons-container" style={{
+				position: 'fixed',
+				top: '1rem',
+				right: '1rem',
+				zIndex: 10000,
+				pointerEvents: 'auto',
+				isolation: 'isolate', // Creates a new stacking context
+                display: 'flex',
+                gap: '0.5rem',
+                alignItems: 'center'
+			}}>
 				<AuthButtons />
 			</div>
 			
-			{/* Hero Section */}
+			<div>
+				{/* Hero Section */}
 			<section
 				ref={heroRef}
 				className="hero-section flex flex-col items-center justify-center py-24"
@@ -1134,6 +1170,7 @@ function FaceWithEyes() {
 				<SimpleSidebar chatHistory={chatHistory} setMessages={setMessages} user={user} setChatHistory={setChatHistory} />
 			</section>
 		</div>
+	</>
 	);
 }
 
