@@ -829,6 +829,14 @@ function FaceWithEyes() {
 									disabled={uploading || loading || docxProcessing}
 									rows={1}
 									style={{ height: "44px" }}
+									onKeyDown={(e) => {
+										if (e.key === 'Enter' && !e.shiftKey) {
+											e.preventDefault();
+											if (input.trim() || audioBlob) {
+												handleSend(e);
+											}
+										}
+									}}
 								/>
 							)}
 							{/* Listening animation bar with placeholder (dedicated listening-bar class) */}
