@@ -217,6 +217,7 @@ export default function Home() {
 		}
 		try {
 			const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://codegeass321-backendserver.hf.space";
+			console.log('Using API URL:', apiUrl); // Debug log
 			const res = await fetch(`${apiUrl}/api/ask`, {
 				method: "POST",
 				headers: {
@@ -313,6 +314,7 @@ export default function Home() {
 		try {
 			console.log("Sending upload request to backend...");
 			const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://codegeass321-backendserver.hf.space";
+			console.log('Using API URL for upload:', apiUrl); // Debug log
 			const res = await fetch(`${apiUrl}/api/upload`, {
 				method: "POST",
 				// Don't set Content-Type header - browser will set it with boundary for multipart/form-data
