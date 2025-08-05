@@ -216,7 +216,8 @@ export default function Home() {
 			}
 		}
 		try {
-			const res = await fetch("https://codegeass321-backendserver.hf.space/api/ask", {
+			const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://codegeass321-backendserver.hf.space";
+			const res = await fetch(`${apiUrl}/api/ask`, {
 				method: "POST",
 				headers: {
 					"Accept": "application/json",
@@ -311,7 +312,8 @@ export default function Home() {
 		
 		try {
 			console.log("Sending upload request to backend...");
-			const res = await fetch("https://codegeass321-backendserver.hf.space/api/upload", {
+			const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://codegeass321-backendserver.hf.space";
+			const res = await fetch(`${apiUrl}/api/upload`, {
 				method: "POST",
 				// Don't set Content-Type header - browser will set it with boundary for multipart/form-data
 				headers: {
@@ -462,7 +464,8 @@ export default function Home() {
 		}
 		
 		try {
-			const res = await fetch("https://codegeass321-backendserver.hf.space/api/clear", {
+			const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://codegeass321-backendserver.hf.space";
+			const res = await fetch(`${apiUrl}/api/clear`, {
 				method: "POST",
 				headers: {
 					"Accept": "application/json",
